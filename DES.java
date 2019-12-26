@@ -1,4 +1,3 @@
-package assign;
 import java.util.*;
 
 public class DES {
@@ -194,13 +193,65 @@ public class DES {
 		return res;
 	}
 	
+	int[] create_arr(int[] arr,int i)
+	{
+		int sma_arr[] =new int[8];
+		for(int j=0;j<8;j++)
+		{
+			sma_arr[j]=arr[(i*8)+j];
+		}
+		return sma_arr;
+	}
+	
 	
 	
 	public static void main(String args[])
 	{
 		
 		int key[] = {1,1,0,0,0,1,1,1,1,0};
-		int pt[] = {0,0,1,0,1,0,0,0};
+		int pt[] = new int[8];
+		String s="";
+		System.out.println("Enter the plain text");
+		Scanner sc =new Scanner(System.in);
+		s=sc.next();
+		int pt1[] =new int[160];
+		int flag1=1;
+		//System.out.println(s.length());
+		for(int i=0;i<s.length();i++)
+		{
+			int c=(int)s.charAt(i);
+			//System.out.println(c);
+		
+			while(c!=0)
+			{
+				int rem = c%10;
+				c=c/10;
+			//	System.out.println("Rem is:-"+rem);
+				if(flag1==1)
+				{	
+					for(int j=1;j<5;j++)
+					{
+						pt1[((i+1)*8)-j]=rem%2;
+						rem=rem/2;
+					}
+					flag1=0;
+				}	
+				else
+				{
+					for(int j=3;j>=0;j--)
+					{
+						pt1[((i)*8)+j]=rem%2;
+						rem=rem/2;
+					}
+					flag1=1;
+				}
+			}
+		}
+		/*
+		for(int i=0;i<(s.length()*8);i++)
+		{	
+			System.out.println(pt1[i]);
+		}	*/
 		
 		DES d =new DES();
 		
@@ -219,45 +270,100 @@ public class DES {
 		}
 		System.out.print("\n");
 		
-		int ipt[] = d.IP(pt);
-		System.out.print("IP of the plane text\n");
-		for(int i=0;i<8;i++)
+		
+		for(int p=0;p<s.length();p++)
 		{
-			System.out.print(ipt[i]);
+			System.out.println("\n \n Encryption Part starts \n");
+			pt = d.create_arr(pt1, p);
+			System.out.println("Block Plain Text:-");
+			for(int i=0;i<8;i++)
+			{
+				System.out.print(pt[i]);
+			}
+			System.out.print("\n");
+			int ipt[] = d.IP(pt);
+			System.out.print("IP of the plane text\n");
+			for(int i=0;i<8;i++)
+			{
+				System.out.print(ipt[i]);
+			}
+			System.out.print("\n");
+		
+			int left1[] = d.generateLeft(ipt);
+			int right1[] = d.generateRight(ipt);
+		
+			int result1[]= d.smallf(left1, right1, k1,1);
+			System.out.print("After fk1 and sw\n");
+			for(int i=0;i<8;i++)
+			{
+				System.out.print(result1[i]);
+			}
+			System.out.print("\n");
+		
+			int left2[] = d.generateLeft(result1);
+			int right2[] = d.generateRight(result1);
+			
+			int result2[] = d.smallf(left2, right2, k2,2);
+		
+		
+			int cipher[] = d.IPInv(result2);
+			System.out.print("Before Inverse Permutations :-\n");
+			for(int i=0;i<8;i++)
+			{
+				System.out.print(result2[i]);
+			}
+			System.out.print("\n");
+		
+			System.out.print("Final cipher text is:-\n");
+			for(int i=0;i<8;i++)
+			{
+				System.out.print(cipher[i]);
+			}
+			System.out.print("\n");
+		
+			System.out.println("\n Decryption part starts \n");
+		
+			cipher = d.IP(cipher);
+			System.out.print("IP of the cipher text\n");
+			for(int i=0;i<8;i++)
+			{
+				System.out.print(cipher[i]);
+			}
+			System.out.print("\n");
+		
+			int lcip[] =d.generateLeft(cipher);
+			int rcip[] =d.generateRight(cipher);
+		
+			result1 = d.smallf(lcip, rcip, k2,1);
+			System.out.print("After fk2 and sw\n");
+			for(int i=0;i<8;i++)
+			{
+				System.out.print(result1[i]);
+			}
+			System.out.print("\n");
+		
+			int lcip2[] = d.generateLeft(result1);
+			int rcip2[] = d.generateRight(result1);
+		
+			result2 = d.smallf(lcip2, rcip2, k2,2);
+			System.out.print("Before Inverse Permutations :-\n");
+			for(int i=0;i<8;i++)
+			{
+				System.out.print(result2[i]);
+			}
+			System.out.print("\n");
+		
+			int final_result[] = d.IPInv(result2);
+			System.out.print("Final Plain text is:-\n");
+			for(int i=0;i<8;i++)
+			{
+				System.out.print(final_result[i]);
+			}
+			System.out.print("\n");
+		
 		}
-		System.out.print("\n");
 		
-		int left1[] = d.generateLeft(ipt);
-		int right1[] = d.generateRight(ipt);
-		
-		int result1[]= d.smallf(left1, right1, k1,1);
-		System.out.print("After fk1 and sw\n");
-		for(int i=0;i<8;i++)
-		{
-			System.out.print(result1[i]);
-		}
-		System.out.print("\n");
-		
-		int left2[] = d.generateLeft(result1);
-		int right2[] = d.generateRight(result1);
-		
-		int result2[] = d.smallf(left2, right2, k2,2);
-		
-		
-		int finalresult[] = d.IPInv(result2);
-		System.out.print("Before Inverse Permutations :-\n");
-		for(int i=0;i<8;i++)
-		{
-			System.out.print(result2[i]);
-		}
-		System.out.print("\n");
-		
-		System.out.print("Final cipher text is:-\n");
-		for(int i=0;i<8;i++)
-		{
-			System.out.print(finalresult[i]);
-		}
-		System.out.print("\n");
+		sc.close();
 	}
 }
 
